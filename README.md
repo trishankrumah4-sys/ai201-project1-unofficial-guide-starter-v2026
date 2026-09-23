@@ -1,6 +1,6 @@
 # The Unofficial Guide
 
-<!-- Replace this line with your name and which corpus you picked. -->
+Patricia Nkrumah — campus_life corpus
 
 > **This file is your submission.** Fill it in as you go — most sections get
 > written during the milestone that produces them, not at the end.
@@ -20,7 +20,15 @@
 # Unit 1
 
 ## What This Does
-
+This is a retrieval-augmented question-answering system for Marymount-style
+campus life questions, built on the campus_life corpus (88 short documents
+covering housing, dining, courses, admin deadlines, and student life). It
+answers specific questions about campus policies and unofficial student
+knowledge — like whether the housing lottery is really random, or how late
+the library stays open during reading week — by retrieving the most relevant
+document, grounding its answer strictly in that document's text, and naming
+its source. Questions outside the corpus (like "who won the 1994 World Cup")
+are correctly refused rather than answered from general knowledge.
 <!-- Three or four sentences. Which corpus you picked, and the kinds of
      questions your system answers. Write it for someone who has never seen
      this repo.
@@ -50,7 +58,9 @@ workload + timing advice) came apart into separate, still-complete thoughts.
 
      Milestone 3. -->
 
-## Sample Chunks
+ ## Sample Chunks
+
+**Chunk 1** — source: `admin_add_drop_deadline.txt#0` — produced by: `chunker.py::split_documents`
 
 <!-- Five chunks, pasted as text. Label each one and name the file it came from
      AND the function that produced it — the grader checks your code against
@@ -69,20 +79,40 @@ You can add a course through the end of the second week. Dropping is a longer wi
 
 **Chunk 2** — source: `course_biol_160_workload.txt#0` — produced by: `chunker.py::split_documents`
 ```
+Workload for BIOL 160 Cell Biology
+
+People keep asking so: 9 to 11 hours a week, the heaviest first-year course by reputation. That's real time, not optimistic time.
+
+It's front-loaded — the first month is heavier than the rest, partly because you're learning the format.
 ```
 
 **Chunk 3** — source: `course_phys_130.txt#0` — produced by: `chunker.py::split_documents`
-
 ```
+PHYS 130 Mechanics
+
+Just finished a year in this building. Format is lecture with a compulsory lab that meets fortnightly. Assessment: three midterms, no final, plus a lab practical. Not curved, but the lowest midterm is dropped.
+
+Expect 7 hours a week, plus 3 on lab weeks.
+
+The one piece of advice: the lab practical is worth 20% and almost nobody prepares for it.
 ```
 
 **Chunk 4** — source: `dining_verrill_street_grill_followup.txt#0` — produced by: `chunker.py::split_documents`
 ```
+Re: Verrill Street Grill
+
+Adding to what people have said about Verrill Street Grill. The wait figure of up to 30 minutes on Friday evenings matches what I've seen. If you're trying to eat between classes, go before 11:45 and it's a different building entirely.
+
+Also worth saying: one register, so the queue is a single line no matter how busy. Nobody tells you this at orientation.
 ```
 
 **Chunk 5** — source: `housing_morrow_house_laundry.txt#0` — produced by: `chunker.py::split_documents`
-
 ```
+Laundry in Morrow House
+
+Machines take $1.50 wash, $1.25 dry, coin or card. There are eight washers and six dryers for the building, which is the wrong ratio and means the dryers back up on Sunday evenings.
+
+Best time to do laundry here is Tuesday or Wednesday morning. Sunday after 6pm you will wait.
 ```
 
 ## Sample Answer
@@ -134,9 +164,20 @@ My five in-corpus questions and my five out-of-scope questions produced two comp
 
      Milestone 5. -->
 
-**1.**
+**1.** I asked Claude to write a custom chunking function for my campus_life
+documents. It initially proposed keeping every document as a single chunk
+regardless of length, but I pointed out that some documents (like course
+pages with separate workload and exam sections) were long enough to bury
+multiple distinct facts in one chunk. Claude revised it to split only
+documents over 500 characters, and only on paragraph breaks rather than a
+fixed character count, so a sentence would never be cut in half.
 
-**2.**
+**2.** I asked Claude to help me analyze my relevance cutoff by running all five
+in-corpus and five out-of-scope test questions. It suggested keeping the
+starter's default of 0.6 since my own distances showed a large gap (worst
+in-corpus was 0.447, best out-of-scope was 0.825) with no overlap, so I
+didn't need to tune it further — I confirmed this by checking the actual
+numbers myself rather than taking the suggestion at face value.
 
 <!-- ── Stretch features ─────────────────────────────────────────────────────
      Doing one? Say so here BEFORE you start. A feature this README never
