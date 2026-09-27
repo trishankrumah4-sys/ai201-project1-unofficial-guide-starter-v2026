@@ -247,7 +247,41 @@ numbers myself rather than taking the suggestion at face value.
 | 4 |  |  |  |
 | 5 |  |  |  |
 
+
 ## Diagnoses
+
+No criteria were missed — all five came back MET across all three runs.
+
+Rather than treat that as the system working perfectly, it's worth asking
+whether each target was actually hard to clear. Two of the five weren't:
+
+**Criterion 3 (gate stops out-of-corpus questions)** was the safest bet
+of the five. My five out-of-scope test questions (capital of Mongolia,
+changing engine oil, the 1994 World Cup, ibuprofen dosage, a Rust for-loop)
+are all completely unrelated to campus life topics. Their best distances
+ranged from 0.825–0.932, while my in-corpus questions topped out at 0.447 —
+a gap of nearly 0.4 with a cutoff of 0.6 sitting comfortably in the middle.
+The gate was never actually tested near its boundary; any cutoff between
+roughly 0.45 and 0.82 would have passed this test just as well. A harder,
+more honest version of this criterion would use "near-miss" questions —
+ones that share vocabulary with the corpus but aren't answerable from it
+(e.g. "does Innisfree Hall have single rooms," if that specific fact isn't
+covered, or "what's the wifi password in the library"). Those would sit
+much closer to the cutoff and actually test whether 0.6 is doing real work.
+
+**Criterion 4 (chunks read as complete thoughts)** was similarly safe by
+construction. My campus_life documents average about 317 characters each,
+and the chunker only splits documents over 500 characters, and only on
+paragraph breaks. That means most documents in this corpus were never at
+risk of being split at all — sampling 5 chunks and finding them all
+complete mostly confirms that the chunker didn't have to do anything hard,
+not that it handles hard splits well.
+
+If I were to tighten one criterion for next time, I'd revise criterion 3
+to test near-miss questions instead of clearly unrelated ones — that's
+the more useful signal about whether the relevance gate is actually doing
+its job, versus criterion 4, which is limited mainly by corpus size rather
+than a fixable target.
 
 <!-- For each miss: which stage caused it, and how. The stage alone isn't
      enough — you need the mechanism.
@@ -281,16 +315,36 @@ numbers myself rather than taking the suggestion at face value.
 <!-- Same format, same five criteria, three runs each.
      `python run_eval.py --label after` -->
 
-| Criterion | Target | Run 1 | Run 2 | Run 3 | Verdict |
-|---|---|---|---|---|---|
-| 1. Retrieved chunk contains the answer | 4 of 5 |  |  |  |  |
-| 2. Every answer names a source | 5 of 5 |  |  |  |  |
-| 3. Gate stops out-of-corpus questions | 4 of 5 |  |  |  |  |
-| 4. | | | | | |
-| 5. | | | | | |
+| 1. Retrieved chunk contains the answer | 4 of 5 | 5/5 | 5/5 | 5/5 | MET |
+| 2. Every answer names a source | 5 of 5 | 5/5 | 5/5 | 5/5 | MET |
+| 3. Gate stops out-of-corpus questions | 4 of 5 | 5/5 | 5/5 | 5/5 | MET |
+| 4. Chunks read as complete thoughts | 4 of 5 | 5/5 | 5/5 | 5/5 | MET |
+| 5. Sources are accurate, not just present | 5 of 5 | 5/5 | 5/5 | 5/5 | MET |
 
 **Did it help?**
+No. I re-ran all 5 real test questions (unchanged, distances identical
+to the before run) and my 5 near-miss questions from the diagnosis
+(topically related but not actually covered — e.g. "is there a late
+fee for overdue library books"). All 5 near-miss questions were already
+being correctly refused *before* the change, via the grounding
+instruction's existing "don't guess" rule — even though only 1 of the
+5 was stopped by the relevance gate itself (best distance 0.602 vs.
+cutoff 0.6). After tightening the prompt to explicitly check for the
+*specific* fact asked rather than just topical overlap, the outcome
+on all 5 near-miss questions was unchanged: same refusals, same
+distances, nearly identical wording.
 
+This tells me the real risk I diagnosed — that in-corpus and
+near-miss distances overlap (0.362–0.602 for near-misses vs.
+0.210–0.447 for real questions), so no cutoff value can separate
+them — is not something a prompt-level fix can close. The system
+currently works because the grounding instruction is a genuinely
+reliable second layer, not because tightening its wording adds much
+on top of what it already does. A structural fix (e.g. a stricter
+keyword-overlap check between the question and the retrieved chunk,
+independent of embedding distance) would be needed to actually move
+the gate itself — that's future work, not something this change
+attempted.
 <!-- Say plainly whether it did, and how you know. If it made things worse,
      say that — a change that backfired, honestly reported, earns full credit
      and is more interesting than one that worked. What matters is that you can

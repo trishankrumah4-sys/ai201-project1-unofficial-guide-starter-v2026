@@ -277,10 +277,10 @@ GROUNDING_INSTRUCTION = """You answer questions using only the documents provide
 
 Rules:
 - Use only the information in the documents below. Do not use anything you know from elsewhere.
-- If the documents don't cover the question, say you don't have enough information. Do not guess.
+- Before answering, check whether the documents state the SPECIFIC fact the question asks for — not just whether they discuss the same general topic. A document about parking permits does not answer a question about parking permit late fees unless it actually mentions a fee.
+- If the documents don't state that specific fact, say you don't have enough information. Do not guess, and do not infer an answer from a related but different fact in the same document.
 - Name the document your answer came from, using the filename given in each excerpt.
 - Be brief. Two or three sentences is usually enough."""
-
 
 def build_prompt(question: str, results) -> str:
     """
