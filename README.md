@@ -193,7 +193,13 @@ numbers myself rather than taking the suggestion at face value.
      how it went. -->
 
 ## Run Log — Before
-
+| Criterion | Target | Run 1 | Run 2 | Run 3 | Verdict |
+|---|---|---|---|---|---|
+| 1. Retrieved chunk contains the answer | 4 of 5 | 5/5 | 5/5 | 5/5 | MET |
+| 2. Every answer names a source | 5 of 5 | 5/5 | 5/5 | 5/5 | MET |
+| 3. Gate stops out-of-corpus questions | 4 of 5 | 5/5 | 5/5 | 5/5 | MET |
+| 4. Chunks read as complete thoughts | 4 of 5 | 5/5 | 5/5 | 5/5 | MET |
+| 5. Sources are accurate, not just present | 5 of 5 | 5/5 | 5/5 | 5/5 | MET |
 <!-- Your five criteria, three runs each. `python run_eval.py --label before`
      runs the questions, puts the OUT_OF_SCOPE ones through the gate, and
      writes it all into results/ for you. Targets come from criteria.md; the
@@ -217,7 +223,13 @@ numbers myself rather than taking the suggestion at face value.
      Name the file and function that produced it. -->
 
 ## Verdicts
-
+| # | Criterion | Verdict | How I decided |
+|---|---|---|---|
+| 1 | Retrieved chunk contains the answer | MET | All 5 questions retrieved the correct source document across all 3 runs — verified by checking that the cited file matches a chunk in each question's retrieved set. |
+| 2 | Every answer names a source | MET | Every one of the 15 answers (5 questions × 3 runs) named a source file, whether inline or as a "Source:" line. No exceptions. |
+| 3 | Gate stops out-of-corpus questions | MET | All 5 out-of-scope questions were refused, with best distances (0.825–0.932) far above the 0.6 cutoff and clearly separated from in-corpus distances (0.21–0.447). |
+| 4 | Chunks read as complete thoughts | MET | Sampled 5 chunks spread across the corpus; each was a full, self-contained document with no sentence cut off at either end. |
+| 5 | Sources are accurate, not just present | MET | Checked the actual text of all 5 cited source documents against the facts in each answer — every fact used was genuinely present in the named file. |
 <!-- MET or MISSED for each of the five, against the target you wrote last
      unit — not a new one. Plus a sentence on how you decided. That sentence
      matters most where it was close.
