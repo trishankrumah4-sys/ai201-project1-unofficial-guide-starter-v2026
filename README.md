@@ -352,8 +352,22 @@ attempted.
 
      Milestone 4. -->
 
-## What's Still Broken
 
+## What's Still Broken
+No criterion is currently MISSED. But the near-miss testing in Milestone 3
+surfaced a real gap: the relevance gate's distance cutoff cannot, on its
+own, separate answerable questions (0.210–0.447) from plausible-sounding
+but uncovered ones (0.362–0.602) — the ranges overlap. Right now the
+system is correct only because the grounding instruction acts as a second
+layer of defense, and my Milestone 4 attempt to tighten that instruction's
+wording made no measurable difference, since it was already doing this job.
+
+What I'd do next: build a lightweight keyword-overlap check between the
+question and the retrieved chunk, independent of embedding distance, so
+there's a genuine second signal at the gate level rather than relying
+entirely on the model's own restraint downstream. I stopped here because
+that's a real feature addition, not a tuning change, and this unit's rule
+is one change only.
 <!-- For each criterion still missed after your fix: what you'd do about it,
      and why you stopped where you did.
 
@@ -363,7 +377,15 @@ attempted.
      Milestone 5. -->
 
 ## What I'd Do Differently
-
+I'd write criterion 3 differently next time. "The gate refuses at least
+4 of 5 out-of-corpus questions" sounds like a real target, but my five
+test questions (capital of Mongolia, changing engine oil, etc.) were so
+unrelated to campus life that the gate was never actually tested near its
+boundary — any cutoff between about 0.45 and 0.82 would have passed
+identically. A better version would specify testing against near-miss
+questions — ones that share vocabulary with the corpus but aren't
+answerable from it — since that's the case that actually stresses the
+cutoff and reveals whether it's doing real work.
 <!-- Knowing what you know now — which of your five criteria would you write
      differently, and why?
 
